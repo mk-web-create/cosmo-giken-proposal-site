@@ -8,25 +8,39 @@
   var formResult = document.querySelector('.form-result');
 
   function closeMenu() {
+    if (!globalMenu || !menuButton) return;
     globalMenu.classList.remove('is-open');
     menuButton.setAttribute('aria-expanded', 'false');
   }
 
-  menuButton.addEventListener('click', function () {
-    var shouldOpen = !globalMenu.classList.contains('is-open');
-    globalMenu.classList.toggle('is-open', shouldOpen);
-    menuButton.setAttribute('aria-expanded', String(shouldOpen));
-  });
+  if (menuButton && globalMenu) {
+    menuButton.addEventListener('click', function () {
+      var shouldOpen = !globalMenu.classList.contains('is-open');
+      globalMenu.classList.toggle('is-open', shouldOpen);
+      menuButton.setAttribute('aria-expanded', String(shouldOpen));
+    });
 
-  globalMenu.querySelectorAll('a').forEach(function (link) {
-    link.addEventListener('click', closeMenu);
-  });
+    globalMenu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
 
-  demoForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-  });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && globalMenu.classList.contains('is-open')) {
+        closeMenu();
+        menuButton.focus();
+      }
+    });
+  }
 
-  demoButton.addEventListener('click', function () {
-    formResult.textContent = 'これは入力デモのため、内容は送信されません。';
-  });
+  if (demoForm) {
+    demoForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+    });
+  }
+
+  if (demoButton && formResult) {
+    demoButton.addEventListener('click', function () {
+      formResult.textContent = 'これは入力デモです。入力内容は保存・送信されません。';
+    });
+  }
 })();
